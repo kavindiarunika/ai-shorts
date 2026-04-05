@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function SelectStyle() {
+function SelectStyle({onUserSelect}:{onUserSelect:(key:string,value:string)=>void}) {
 
     const stypeOption=[
         {
@@ -37,11 +37,13 @@ function SelectStyle() {
 
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 mt-3 gap-5'>
         {stypeOption.map((item,index)=>(
-            <div className='relative hover:scale-105 transition-all cursor-pointer' key={index}>
+            <div className={`relative hover:scale-105 transition-all cursor-pointer ${selectOption===item.name && 'border-4 border-[#8338ec] '}`} key={index}>
 
                 <img src ={item.image} alt={item.name} width={100} height={100}
                 className='h-48 object-cover rounded-lg w-full'
-                onClick={()=>setSelectOption(item.name)} />
+                onClick={()=>{
+                    setSelectOption(item.name)
+                    onUserSelect('imagestyle',item.name)}} />
                 <h2 className='absolute p-1 w-full  text-center bg-black bottom-0 rounded-b-lg text-white text-canter'>{item.name}</h2>
             </div>
 
