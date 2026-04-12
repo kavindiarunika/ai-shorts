@@ -7,11 +7,17 @@ import SelectDuration from '../_components/SelectDuration'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import CustomerLoading from '../_components/CustomerLoading'
+import { v4 as uuidv4 } from 'uuid';
+
+
+const scriptData ='it was a cold,dark night,the wind howled,and .....';
+
+
 function CreateNew() {
 
   const [formData, setFormData] = useState<{ [key: string]: string }>({})
   const [loading,setloading] =useState<boolean>(false)
-  const[videoScript,setVideoScript] =useState<String>();
+  const [videoScript, setVideoScript] = useState<{ contentText: string }[]>([]);
   const onHandleInputChange = (fieldName: string, fieldValue: string) => {
     setFormData(prev => ({
       ...prev,
@@ -20,7 +26,8 @@ function CreateNew() {
   }
 
   const onCreateClickHandle =() =>{
-    GetVideoScript();
+   // GetVideoScript();
+    generateAudioFile([{contentText:scriptData}])
   }
 
   const GetVideoScript =async() =>{
@@ -33,10 +40,30 @@ function CreateNew() {
       .then(res =>{
         console.log(res.data)
         setVideoScript(res.data.result)
+        generateAudioFile(res.data.result);
       })
       setloading(false)
   }
 
+  const generateAudioFile =async(videoScriptData: { contentText: string }[])=>{
+
+    let script ='';
+    const id =uuidv4();
+    videoScriptData.forEach((item: { contentText: string }) =>{
+      script = script+item.contentText+' ';
+
+    })
+
+    await axios.post('/api/audio',{
+      text:videoScriptData,
+      id:id
+    }).then(resp =>{
+      console.log(resp.data)
+    })
+
+    console.log(script)
+
+  }
   return (
     <div className='md:px-20'>
       <h2 className='font-bold text-4xl text-[#8338ec] text-center'>
